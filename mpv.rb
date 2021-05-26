@@ -60,16 +60,13 @@ class Mpv < Formula
       sha256 "5125c8f286e96cbe9bcdc0ba11cc019d9b239c54e3f2ab6c0b7af0e46ff516ab"
     end
 
-    rsrc_dir = buildpath/"TOOLS/osxbundle/mpv.app/Contents/Resources"
-    rm "#{rsrc_dir}/icon.icns"
-
     resource("app_icon").stage do
-      rsrc_dir.install "mpv.icns" => "icon.icns"
+      rm "#{buildpath/'TOOLS/osxbundle/mpv.app/Contents/Resources'}/icon.icns"
+      (buildpath/"TOOLS/osxbundle/mpv.app/Contents/Resources").install "mpv.icns" => "icon.icns"
     end
 
     system Formula["python@3.9"].opt_bin/"python3", "bootstrap.py"
     system Formula["python@3.9"].opt_bin/"python3", "waf", "configure", *args
-    # system Formula["python@3.9"].opt_bin/"python3", "waf", "install"
     system Formula["python@3.9"].opt_bin/"python3", "waf", "build"
 
     # build mpv.app
