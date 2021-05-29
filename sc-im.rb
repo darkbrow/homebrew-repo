@@ -7,7 +7,7 @@ class ScIm < Formula
   head "https://github.com/andmarti1424/sc-im.git", branch: "freeze"
 
   depends_on "darkbrow/repo/libxls"
-  depends_on "libxlsxwriter"
+  depends_on "darkbrow/repo/libxlsxwriter"
   depends_on "libzip"
   depends_on "lua"
   depends_on "ncurses"
