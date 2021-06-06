@@ -1,10 +1,9 @@
 class Gnuplot < Formula
   desc "Command-driven, interactive function plotting"
   homepage "http://www.gnuplot.info/"
-  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.1/gnuplot-5.4.1.tar.gz"
-  sha256 "6b690485567eaeb938c26936e5e0681cf70c856d273cc2c45fabf64d8bc6590e"
+  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.2/gnuplot-5.4.2.tar.gz"
+  sha256 "e57c75e1318133951d32a83bcdc4aff17fed28722c4e71f2305cfc2ae1cae7ba"
   license "gnuplot"
-  revision 2
 
   head do
     url "https://git.code.sf.net/p/gnuplot/gnuplot-main.git"
@@ -56,9 +55,9 @@ class Gnuplot < Formula
     system "./configure", *args
     ENV.deparallelize # or else emacs tries to edit the same file with two threads
     system "make"
-    # system "make", "check"
+    system "make", "check" if build.head?
     system "make", "install"
-    # (pkgshare/"5.5").install "demo"
+    (pkgshare/"5.5").install "demo" if build.head?
   end
 
   test do
