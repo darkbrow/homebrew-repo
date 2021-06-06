@@ -55,19 +55,34 @@ class Mpv < Formula
     ]
  
     # change app icon to more big sur friendly one.
-    resource "app_icon" do
-      url "https://raw.githubusercontent.com/darkbrow/mpv-autosub/master/mpv.icns"
-      sha256 "5125c8f286e96cbe9bcdc0ba11cc019d9b239c54e3f2ab6c0b7af0e46ff516ab"
+    resource "app_icons" do
+      url "https://raw.githubusercontent.com/darkbrow/mpv-autosub/master/mpv-icons.tar.gz"
+      sha256 "fd4e38e9b8575fcf0a7ecc44c5d754c150d023357a1b783eec477abf56cc6655"
     end
 
-    resource("app_icon").stage do
+    resource("app_icons").stage do
+      rm "#{buildpath/'etc'}/mpv-gradient.svg"
+      rm "#{buildpath/'etc'}/mpv-icon-8bit-128x128.png"
+      rm "#{buildpath/'etc'}/mpv-icon-8bit-16x16.png"
+      rm "#{buildpath/'etc'}/mpv-icon-8bit-32x32.png"
+      rm "#{buildpath/'etc'}/mpv-icon-8bit-64x64.png"
+      rm "#{buildpath/'etc'}/mpv-icon.ico"
+      rm "#{buildpath/'etc'}/mpv-symbolic.svg"
       rm "#{buildpath/'TOOLS/osxbundle/mpv.app/Contents/Resources'}/icon.icns"
       (buildpath/"TOOLS/osxbundle/mpv.app/Contents/Resources").install "mpv.icns" => "icon.icns"
+      (buildpath/'etc').install "mpv-gradient.svg"
+      (buildpath/'etc').install "mpv-icon-8bit-128x128.png"
+      (buildpath/'etc').install "mpv-icon-8bit-16x16.png"
+      (buildpath/'etc').install "mpv-icon-8bit-32x32.png"
+      (buildpath/'etc').install "mpv-icon-8bit-64x64.png"
+      (buildpath/'etc').install "mpv-icon.ico"
+      (buildpath/'etc').install "mpv-symbolic.svg"
     end
 
     system Formula["python@3.9"].opt_bin/"python3", "bootstrap.py"
     system Formula["python@3.9"].opt_bin/"python3", "waf", "configure", *args
-    system Formula["python@3.9"].opt_bin/"python3", "waf", "build"
+#     system Formula["python@3.9"].opt_bin/"python3", "waf", "build"
+    system Formula["python@3.9"].opt_bin/"python3", "waf", "install"
 
     # build mpv.app
     bundle_opt = []
@@ -78,9 +93,9 @@ class Mpv < Formula
     system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
 
     prefix.install "build/mpv.app"
-    bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
-    zsh_completion.install "etc/_mpv.zsh"
-    man1.install "build/DOCS/man/mpv.1"
+#     bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
+#     zsh_completion.install "etc/_mpv.zsh"
+#     man1.install "build/DOCS/man/mpv.1"
   end
 
   test do
