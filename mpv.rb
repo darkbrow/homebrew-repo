@@ -61,28 +61,13 @@ class Mpv < Formula
     end
 
     resource("app_icons").stage do
-      rm "#{buildpath/'etc'}/mpv-gradient.svg"
-      rm "#{buildpath/'etc'}/mpv-icon-8bit-128x128.png"
-      rm "#{buildpath/'etc'}/mpv-icon-8bit-16x16.png"
-      rm "#{buildpath/'etc'}/mpv-icon-8bit-32x32.png"
-      rm "#{buildpath/'etc'}/mpv-icon-8bit-64x64.png"
-      rm "#{buildpath/'etc'}/mpv-icon.ico"
-      rm "#{buildpath/'etc'}/mpv-symbolic.svg"
       rm "#{buildpath/'TOOLS/osxbundle/mpv.app/Contents/Resources'}/icon.icns"
       (buildpath/"TOOLS/osxbundle/mpv.app/Contents/Resources").install "mpv.icns" => "icon.icns"
-      (buildpath/'etc').install "mpv-gradient.svg"
-      (buildpath/'etc').install "mpv-icon-8bit-128x128.png"
-      (buildpath/'etc').install "mpv-icon-8bit-16x16.png"
-      (buildpath/'etc').install "mpv-icon-8bit-32x32.png"
-      (buildpath/'etc').install "mpv-icon-8bit-64x64.png"
-      (buildpath/'etc').install "mpv-icon.ico"
-      (buildpath/'etc').install "mpv-symbolic.svg"
     end
 
     system Formula["python@3.9"].opt_bin/"python3", "bootstrap.py"
     system Formula["python@3.9"].opt_bin/"python3", "waf", "configure", *args
-#     system Formula["python@3.9"].opt_bin/"python3", "waf", "build"
-    system Formula["python@3.9"].opt_bin/"python3", "waf", "install"
+    system Formula["python@3.9"].opt_bin/"python3", "waf", "build"
 
     # build mpv.app
     bundle_opt = []
@@ -92,10 +77,11 @@ class Mpv < Formula
     # correct version string in info.plist
     system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
 
+    # install & link command line support files
     prefix.install "build/mpv.app"
-#     bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
-#     zsh_completion.install "etc/_mpv.zsh"
-#     man1.install "build/DOCS/man/mpv.1"
+    bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
+    zsh_completion.install "etc/_mpv.zsh"
+    man1.install "build/DOCS/man/mpv.1"
   end
 
   test do
