@@ -9,7 +9,7 @@ class ScIm < Formula
   depends_on "darkbrow/repo/libxls"
   depends_on "darkbrow/repo/libxlsxwriter"
   depends_on "libzip"
-  depends_on "lua"
+  depends_on "luajit-openresty"
   depends_on "ncurses"
 
   uses_from_macos "bison" => :build
