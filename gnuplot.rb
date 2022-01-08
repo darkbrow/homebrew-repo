@@ -1,12 +1,12 @@
 class Gnuplot < Formula
   desc "Command-driven, interactive function plotting"
   homepage "http://www.gnuplot.info/"
-  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.2/gnuplot-5.4.2.tar.gz"
-  sha256 "e57c75e1318133951d32a83bcdc4aff17fed28722c4e71f2305cfc2ae1cae7ba"
+  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.3/gnuplot-5.4.3.tar.gz"
+  sha256 "51f89bbab90f96d3543f95235368d188eb1e26eda296912256abcd3535bd4d84"
   license "gnuplot"
 
   head do
-    url "https://git.code.sf.net/p/gnuplot/gnuplot-main.git"
+    url "https://git.code.sf.net/p/gnuplot/gnuplot-main.git", branch: "master"
 
     depends_on "autoconf" => :build
     depends_on "automake" => :build
@@ -21,6 +21,12 @@ class Gnuplot < Formula
   depends_on "qt@5"
   depends_on "readline"
   depends_on "darkbrow/repo/libcaca"
+
+  on_linux do
+    depends_on "gcc"
+  end
+
+  fails_with gcc: "5"
 
   def install
     # Qt5 requires c++11 (and the other backends do not care)
