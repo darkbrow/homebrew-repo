@@ -1,4 +1,4 @@
-class Ffmpeg < Formula
+class FfmpegAT4 < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
   url "https://ffmpeg.org/releases/ffmpeg-4.4.1.tar.xz"
@@ -7,7 +7,7 @@ class Ffmpeg < Formula
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
   revision 5
-  head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
+  head "https://github.com/FFmpeg/FFmpeg.git", revision: "06a54a4ec73ea6eb8cec41b7af75367bafb075e0"
 
   livecheck do
     url "https://ffmpeg.org/download.html"
