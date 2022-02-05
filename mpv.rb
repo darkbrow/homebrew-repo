@@ -14,7 +14,7 @@ class Mpv < Formula
   depends_on "python@3.9" => :build
   depends_on xcode: :build
 
-  depends_on "darkbrow/repo/ffmpeg@4"
+  depends_on "darkbrow/repo/ffmpeg"
   depends_on "jpeg"
   depends_on "libarchive"
   depends_on "libass"
