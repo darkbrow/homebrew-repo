@@ -1,8 +1,8 @@
 class Unrar < Formula
   desc "Extract, view, and test RAR archives"
   homepage "https://www.rarlab.com/"
-  url "https://www.rarlab.com/rar/unrarsrc-6.0.7.tar.gz"
-  sha256 "a7029942006cbcced3f3b7322ec197683f8e7be408972ca08099b196c038f518"
+  url "https://www.rarlab.com/rar/unrarsrc-6.1.6.tar.gz"
+  sha256 "67f4ab891c062218c2badfaac9c8cab5c8bfd5e96dabfca56c8faa3d209a801d"
 
   livecheck do
     url "https://www.rarlab.com/rar_add.htm"
