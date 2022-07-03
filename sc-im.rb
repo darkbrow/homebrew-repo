@@ -4,20 +4,22 @@ class ScIm < Formula
   url "https://github.com/andmarti1424/sc-im/archive/v0.8.2.tar.gz"
   sha256 "7f00c98601e7f7709431fb4cbb83707c87016a3b015d48e5a7c2f018eff4b7f7"
   license "BSD-4-Clause"
-  revision 3
+  revision 4
   head "https://github.com/andmarti1424/sc-im.git", branch: "main"
 
   bottle do
-    sha256 arm64_monterey: "7ebc2e0f8248b991474defdab0519dbffc74761b0627100abb9a52e15cc1f945"
-    sha256 arm64_big_sur:  "7a695c6f3c7c830c2c88bf60ec0bc8e844a82b1adf7ed4cd474d89326c0600ff"
-    sha256 monterey:       "16d81d91ba10cc86b39c3408290a3dfc71458c0e72b9dce4bf0dde9a817600f6"
-    sha256 big_sur:        "311253002c6a2e14f2003a7e7e8f88ecbe54a7bd6f373a695e14a2cb4ec0a377"
-    sha256 catalina:       "d25892c33ee8ac59c5e6439a9fe7893fa49c4a8514c2aac880f95f997c3eef32"
-    sha256 x86_64_linux:   "cfcf853d84da9ede68d92fed791600c887869a2fcb2c689eafb3f491a00b06af"
+    rebuild 1
+    sha256 arm64_monterey: "1f124ca1348d233d34dfbd66d267ea410d0f278738cfe41d3d09c568869c8e6c"
+    sha256 arm64_big_sur:  "a28c373e91d91fbaf19826326d1cdd7170f40db8783de0a11bdb8a2f5f821236"
+    sha256 monterey:       "6ced05dfc86a7785bf2b7d8e46c3a05df41bb7f344602d38fd0ae4eca88f1470"
+    sha256 big_sur:        "0dccff5f3ba32682f1998a16b8c84413cc1934cbebe378959473f3eafa12a519"
+    sha256 catalina:       "2d721b8f11810b2024c50e963f3c4ec4da4fe9d6480c41798af9c6d3c9312c5b"
+    sha256 x86_64_linux:   "07756076e093423844a261a77f537844e122e1648db2acc0ae5ddba75ab42293"
   end
 
-  depends_on "darkbrow/repo/libxls"
-  depends_on "darkbrow/repo/libxlsxwriter"
+  depends_on "pkg-config" => :build
+  depends_on "libxls"
+  depends_on "libxlsxwriter"
   depends_on "libxml2"
   depends_on "libzip"
   depends_on "luajit-openresty"
@@ -25,12 +27,21 @@ class ScIm < Formula
 
   uses_from_macos "bison" => :build
 
-  on_linux do
-    depends_on "pkg-config" => :build
-  end
-
   def install
+    # Enable plotting with `gnuplot` if available.
+    ENV.append_to_cflags "-DGNUPLOT"
+
     cd "src" do
+      inreplace "Makefile" do |s|
+        # Increase `MAXROWS` to the maximum possible value.
+        # This is the same limit that Microsoft Excel has.
+        s.gsub! "MAXROWS=65536", "MAXROWS=1048576"
+        if OS.mac?
+          # Use `pbcopy` and `pbpaste` as the default clipboard commands.
+          s.gsub!(/^CFLAGS.*(xclip|tmux).*/, "#\\0")
+          s.gsub!(/^#(CFLAGS.*pb(copy|paste).*)$/, "\\1")
+        end
+      end
       system "make", "prefix=#{prefix}"
       system "make", "prefix=#{prefix}", "install"
     end

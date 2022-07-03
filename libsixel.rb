@@ -1,22 +1,21 @@
 class Libsixel < Formula
   desc "SIXEL encoder/decoder implementation"
   homepage "https://github.com/saitoha/sixel"
-  url "https://github.com/saitoha/libsixel/releases/download/v1.8.6/libsixel-1.8.6.tar.gz"
-  sha256 "9f6dcaf40d250614ce0121b153949c327c46a958cfd2e47750d8788b7ed28e6a"
+  url "https://github.com/libsixel/libsixel/archive/refs/tags/v1.10.3.tar.gz"
+  sha256 "028552eb8f2a37c6effda88ee5e8f6d87b5d9601182ddec784a9728865f821e0"
 
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
   depends_on "jpeg"
   depends_on "libpng"
   depends_on "gd"
 
   def install
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--with-gd",
-                          "--with-jpeg=#{Formula["jpeg"].prefix}",
-                          "--with-png",
-                          "--prefix=#{prefix}"
-    system "make", "install"
+    mkdir "build" do
+      system "meson", *std_meson_args, "..", "-Dgdk-pixbuf2=disabled", "-Dtests=disabled"
+      system "ninja", "-v"
+      system "ninja", "install", "-v"
+    end
   end
 
   test do
