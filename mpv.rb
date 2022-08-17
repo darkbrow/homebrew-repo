@@ -68,14 +68,14 @@ class Mpv < Formula
       (buildpath/"TOOLS/osxbundle/mpv.app/Contents/Resources").install "mpv.icns" => "icon.icns"
     end
 
-    system Formula["python@3.9"].opt_bin/"python3", "bootstrap.py"
-    system Formula["python@3.9"].opt_bin/"python3", "waf", "configure", *args
-    system Formula["python@3.9"].opt_bin/"python3", "waf", "build"
+    system Formula["python@3.9"].opt_bin/"python3.9", "bootstrap.py"
+    system Formula["python@3.9"].opt_bin/"python3.9", "waf", "configure", *args
+    system Formula["python@3.9"].opt_bin/"python3.9", "waf", "build"
 
     # build mpv.app
     bundle_opt = []
     bundle_opt << "--skip-deps" if build.without? "deps"
-    system Formula["python@3.9"].opt_bin/"python3", "./TOOLS/osxbundle.py", *bundle_opt, "build/mpv"
+    system Formula["python@3.9"].opt_bin/"python3.9", "./TOOLS/osxbundle.py", *bundle_opt, "build/mpv"
 
     # correct version string in info.plist
     system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
