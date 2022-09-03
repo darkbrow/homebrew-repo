@@ -22,7 +22,7 @@ class ScIm < Formula
   depends_on "libxlsxwriter"
   depends_on "libxml2"
   depends_on "libzip"
-  depends_on "luajit-openresty"
+  depends_on "luajit"
   depends_on "ncurses"
 
   uses_from_macos "bison" => :build

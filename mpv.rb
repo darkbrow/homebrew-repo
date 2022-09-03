@@ -21,7 +21,8 @@ class Mpv < Formula
   depends_on "darkbrow/repo/libsixel"
   depends_on "darkbrow/repo/libcaca"
   depends_on "little-cms2"
-  depends_on "luajit-openresty"
+  # depends_on "luajit-openresty"
+  depends_on "luajit"
   depends_on "mujs"
   depends_on "uchardet"
   depends_on "vapoursynth"
@@ -38,7 +39,7 @@ class Mpv < Formula
     # libarchive is keg-only
     ENV.prepend_path "PKG_CONFIG_PATH", Formula["libarchive"].opt_lib/"pkgconfig"
     # luajit-openresty is keg-only
-    ENV.prepend_path "PKG_CONFIG_PATH", Formula["luajit-openresty"].opt_lib/"pkgconfig"
+    # ENV.prepend_path "PKG_CONFIG_PATH", Formula["luajit-openresty"].opt_lib/"pkgconfig"
 
     args = %W[
       --prefix=#{prefix}
