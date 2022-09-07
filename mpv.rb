@@ -65,31 +65,35 @@ class Mpv < Formula
       --disable-debug-build
     ]
  
-    # change app icon to more big sur friendly one.
-    resource "app_icons" do
-      url "https://raw.githubusercontent.com/darkbrow/mpv-autosub/master/mpv-icons.tar.gz"
-      sha256 "fd4e38e9b8575fcf0a7ecc44c5d754c150d023357a1b783eec477abf56cc6655"
-    end
+    # # change app icon to more big sur friendly one.
+    # resource "app_icons" do
+    #   url "https://raw.githubusercontent.com/darkbrow/mpv-autosub/master/mpv-icons.tar.gz"
+    #   sha256 "fd4e38e9b8575fcf0a7ecc44c5d754c150d023357a1b783eec477abf56cc6655"
+    # end
 
-    resource("app_icons").stage do
-      rm "#{buildpath/'TOOLS/osxbundle/mpv.app/Contents/Resources'}/icon.icns"
-      (buildpath/"TOOLS/osxbundle/mpv.app/Contents/Resources").install "mpv.icns" => "icon.icns"
-    end
-    
+    # resource("app_icons").stage do
+    #   rm "#{buildpath/'TOOLS/osxbundle/mpv.app/Contents/Resources'}/icon.icns"
+    #   (buildpath/"TOOLS/osxbundle/mpv.app/Contents/Resources").install "mpv.icns" => "icon.icns"
+    # end
 
-    # build mpv.app
+    # # build mpv.app
+    # python3 = "python3.10"
+    # system python3, "bootstrap.py"
+    # system python3, "waf", "configure", *args
+    # system python3, "waf", "build"
+    # system python3, "./TOOLS/osxbundle.py", "build/mpv"
+
+    # # correct version string in info.plist
+    # system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
+
     python3 = "python3.10"
     system python3, "bootstrap.py"
     system python3, "waf", "configure", *args
-    system python3, "waf", "build"
-    system python3, "./TOOLS/osxbundle.py", "build/mpv"
+    system python3, "waf", "install"
 
-    # correct version string in info.plist
-    system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
-
-    # install & link command line support files
-    prefix.install "build/mpv.app"
-    bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
+    # # install & link command line support files
+    # prefix.install "build/mpv.app"
+    # bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
     zsh_completion.install "etc/_mpv.zsh"
     man1.install "build/DOCS/man/mpv.1"
   end
