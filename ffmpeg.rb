@@ -1,26 +1,16 @@
 class Ffmpeg < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-5.0.1.tar.xz"
-  sha256 "ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b"
+  url "https://ffmpeg.org/releases/ffmpeg-5.1.1.tar.xz"
+  sha256 "95bf3ff8c496511e71e958fb249e663c8c9c3de583c5bebc0f5a9745abbc0435"
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
-  revision 3
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   livecheck do
     url "https://ffmpeg.org/download.html"
     regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
-  end
-
-  bottle do
-    sha256 arm64_monterey: "6aa7fa8dbc5fb950f1ef81c31e5c3af52d92c616ea9a4b46e58b42c51a0ba7d7"
-    sha256 arm64_big_sur:  "a494fef2d5a93ecdadfce8530964af6ddcdb8662795bb7aa35ef8f8d8f659a01"
-    sha256 monterey:       "b835b65ef6d4b85e36b7a315133fd9310a4ab6184caef6e8c99174d4aeec7bbb"
-    sha256 big_sur:        "a65289290fb40e981887568f2711357402f2e9e7e42f57e2c4d3984f11b36f7a"
-    sha256 catalina:       "d35f1a769b57ff7180076d53af7c1602ff7e3d3f29f81d6e5a6cb1a90cbc6a3a"
-    sha256 x86_64_linux:   "d020ef50ab876425fa9d9555473b3925da14fe80365a7dc39f53e98e5b7960de"
   end
 
   depends_on "nasm" => :build
@@ -67,8 +57,9 @@ class Ffmpeg < Formula
   uses_from_macos "zlib"
 
   on_linux do
-    depends_on "libxv"
+    depends_on "alsa-lib"
     depends_on "gcc" # because rubberband is compiled with gcc
+    depends_on "libxv"
   end
 
   fails_with gcc: "5"
@@ -129,15 +120,6 @@ class Ffmpeg < Formula
     # Needs corefoundation, coremedia, corevideo
     args << "--enable-videotoolbox" if OS.mac?
     args << "--enable-neon" if Hardware::CPU.arm?
-
-    # Replace hardcoded default VMAF model path
-    unless build.head?
-      %w[doc/filters.texi libavfilter/vf_libvmaf.c].each do |f|
-        inreplace f, "/usr/local/share/model", HOMEBREW_PREFIX/"share/libvmaf/model"
-        # Since libvmaf v2.0.0, `.pkl` model files have been deprecated in favor of `.json` model files.
-        inreplace f, "vmaf_v0.6.1.pkl", "vmaf_v0.6.1.json"
-      end
-    end
 
     system "./configure", *args
     system "make", "install"

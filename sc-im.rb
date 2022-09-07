@@ -7,16 +7,6 @@ class ScIm < Formula
   revision 4
   head "https://github.com/andmarti1424/sc-im.git", branch: "main"
 
-  bottle do
-    rebuild 1
-    sha256 arm64_monterey: "1f124ca1348d233d34dfbd66d267ea410d0f278738cfe41d3d09c568869c8e6c"
-    sha256 arm64_big_sur:  "a28c373e91d91fbaf19826326d1cdd7170f40db8783de0a11bdb8a2f5f821236"
-    sha256 monterey:       "6ced05dfc86a7785bf2b7d8e46c3a05df41bb7f344602d38fd0ae4eca88f1470"
-    sha256 big_sur:        "0dccff5f3ba32682f1998a16b8c84413cc1934cbebe378959473f3eafa12a519"
-    sha256 catalina:       "2d721b8f11810b2024c50e963f3c4ec4da4fe9d6480c41798af9c6d3c9312c5b"
-    sha256 x86_64_linux:   "07756076e093423844a261a77f537844e122e1648db2acc0ae5ddba75ab42293"
-  end
-
   depends_on "pkg-config" => :build
   depends_on "libxls"
   depends_on "libxlsxwriter"
