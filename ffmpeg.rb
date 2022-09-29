@@ -1,8 +1,8 @@
 class Ffmpeg < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-5.1.1.tar.xz"
-  sha256 "95bf3ff8c496511e71e958fb249e663c8c9c3de583c5bebc0f5a9745abbc0435"
+  url "https://ffmpeg.org/releases/ffmpeg-5.1.2.tar.xz"
+  sha256 "619e706d662c8420859832ddc259cd4d4096a48a2ce1eefd052db9e440eef3dc"
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
@@ -22,12 +22,9 @@ class Ffmpeg < Formula
   depends_on "frei0r"
   depends_on "gnutls"
   depends_on "lame"
-  depends_on "fdk-aac"
   depends_on "libass"
   depends_on "libbluray"
-  depends_on "darkbrow/repo/libcaca"
   depends_on "librist"
-  depends_on "librsvg"
   depends_on "libsoxr"
   depends_on "libvidstab"
   depends_on "libvmaf"
@@ -56,9 +53,12 @@ class Ffmpeg < Formula
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
+  depends_on "fdk-aac"
+  depends_on "darkbrow/repo/libcaca"
+  depends_on "librsvg"
+
   on_linux do
     depends_on "alsa-lib"
-    depends_on "gcc" # because rubberband is compiled with gcc
     depends_on "libxv"
   end
 
@@ -70,7 +70,6 @@ class Ffmpeg < Formula
       --enable-shared
       --enable-pthreads
       --enable-version3
-      --enable-nonfree
       --cc=#{ENV.cc}
       --host-cflags=#{ENV.cflags}
       --host-ldflags=#{ENV.ldflags}
@@ -79,11 +78,8 @@ class Ffmpeg < Formula
       --enable-gpl
       --enable-libaom
       --enable-libbluray
-      --enable-libcaca
       --enable-libdav1d
       --enable-libmp3lame
-      --enable-libfdk-aac
-      --enable-librsvg
       --enable-libopus
       --enable-librav1e
       --enable-librist
@@ -115,10 +111,18 @@ class Ffmpeg < Formula
       --enable-libzimg
       --disable-libjack
       --disable-indev=jack
+      --enable-nonfree
+      --enable-libcaca
+      --enable-libfdk-aac
+      --enable-librsvg
     ]
 
     # Needs corefoundation, coremedia, corevideo
-    args << "--enable-videotoolbox" if OS.mac?
+    if OS.mac?
+      args << "--enable-audiotoolbox"
+      args << "--enable-opencl"
+      args << "--enable-videotoolbox"
+    end
     args << "--enable-neon" if Hardware::CPU.arm?
 
     system "./configure", *args

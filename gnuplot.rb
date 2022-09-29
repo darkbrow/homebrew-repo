@@ -20,11 +20,8 @@ class Gnuplot < Formula
   depends_on "pango"
   depends_on "qt@5"
   depends_on "readline"
-  depends_on "darkbrow/repo/libcaca"
 
-  on_linux do
-    depends_on "gcc"
-  end
+  depends_on "darkbrow/repo/libcaca"
 
   fails_with gcc: "5"
 
@@ -39,6 +36,9 @@ class Gnuplot < Formula
       --with-readline=#{Formula["readline"].opt_prefix}
       --without-tutorial
       --disable-wxwidgets
+      --with-qt
+      --without-x
+      --without-latex
       --enable-history-file
       --enable-largefile
       --enable-objects
@@ -50,11 +50,8 @@ class Gnuplot < Formula
       --with-gd=#{Formula["gd"].opt_prefix}
       --with-gpic
       --with-metapost
-      --with-qt
       --with-regis
       --with-tutorial
-      --without-x
-      --without-latex
     ]
 
     system "./prepare" if build.head?

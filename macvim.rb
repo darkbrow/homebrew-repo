@@ -2,10 +2,11 @@
 class Macvim < Formula
   desc "GUI for vim, made for macOS"
   homepage "https://github.com/macvim-dev/macvim"
-  url "https://github.com/macvim-dev/macvim/archive/snapshot-173.tar.gz"
-  version "9.0.0065"
-  sha256 "2b9208fa7d201aa1a5b1ac8f7ebba6d75f37cbfbaaae3b55b81d27c80eb50785"
+  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-174.tar.gz"
+  version "9.0.472"
+  sha256 "9481eeca43cfc0a7cf0604088c4b536f274821adb62b0daefada978aa7f4c41b"
   license "Vim"
+  revision 1
   head "https://github.com/macvim-dev/macvim.git", branch: "master"
 
   depends_on xcode: :build
@@ -17,9 +18,7 @@ class Macvim < Formula
   depends_on "ruby"
   depends_on "tcl-tk"
 
-
-  conflicts_with "vim",
-    because: "vim and macvim both install vi* binaries"
+  conflicts_with "vim", because: "vim and macvim both install vi* binaries"
 
   def install
     # Avoid issues finding Ruby headers
@@ -27,6 +26,10 @@ class Macvim < Formula
 
     # MacVim doesn't have or require any Python package, so unset PYTHONPATH
     ENV.delete("PYTHONPATH")
+
+    # We don't want the deployment target to include the minor version on Big Sur and newer.
+    # https://github.com/Homebrew/homebrew-core/issues/111693
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version
 
     # make sure that CC is set to "clang"
     ENV.clang
@@ -45,9 +48,9 @@ class Macvim < Formula
                           "--with-lua-prefix=#{Formula["lua"].opt_prefix}",
                           "--enable-luainterp",
                           "--enable-python3interp",
-                          "--with-tclsh=tclsh8.6",
                           "--disable-sparkle",
-                          "--with-macarchs=#{Hardware::CPU.arch}"
+                          "--with-macarchs=#{Hardware::CPU.arch}",
+                          "--with-tclsh=tclsh8.6"
     system "make"
 
     prefix.install "src/MacVim/build/Release/MacVim.app"
