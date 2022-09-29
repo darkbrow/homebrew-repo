@@ -7,7 +7,7 @@ class Mpv < Formula
   revision 2
   head "https://github.com/mpv-player/mpv.git", branch: "master"
 
-  option "without-deps", "Build skeletal app bundle"
+  # option "without-deps", "Build skeletal app bundle"
 
   depends_on "docutils" => :build
   depends_on "pkg-config" => :build
@@ -79,25 +79,25 @@ class Mpv < Formula
     end
     
 
-    # build mpv.app
     python3 = "python3.10"
     system python3, "bootstrap.py"
     system python3, "waf", "configure", *args
-    system python3, "waf", "build"
+    system python3, "waf", "install"
 
-    # make app bundle
-    bundle_opt = []
-    bundle_opt << "--skip-deps" if build.without? "deps"
-    system python3, "./TOOLS/osxbundle.py", "build/mpv", *bundle_opt
+    # # build app bundle
+    # system python3, "waf", "build"
+    # bundle_opt = []
+    # bundle_opt << "--skip-deps" if build.without? "deps"
+    # system python3, "./TOOLS/osxbundle.py", "build/mpv", *bundle_opt
 
-    # correct version string in info.plist
-    system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
+    # # correct version string in info.plist
+    # system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
 
-    # install & link command line support files
-    prefix.install "build/mpv.app"
-    bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
-    zsh_completion.install "etc/_mpv.zsh"
-    man1.install "build/DOCS/man/mpv.1"
+    # # install & link command line support files
+    # prefix.install "build/mpv.app"
+    # bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
+    # zsh_completion.install "etc/_mpv.zsh"
+    # man1.install "build/DOCS/man/mpv.1"
   end
 
   test do
