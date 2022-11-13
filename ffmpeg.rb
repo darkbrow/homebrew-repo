@@ -62,6 +62,10 @@ class Ffmpeg < Formula
     depends_on "libxv"
   end
 
+  on_intel do
+    depends_on "nasm" => :build
+  end
+
   fails_with gcc: "5"
 
   def install
