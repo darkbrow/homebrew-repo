@@ -1,8 +1,8 @@
 class Gnuplot < Formula
   desc "Command-driven, interactive function plotting"
   homepage "http://www.gnuplot.info/"
-  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.5/gnuplot-5.4.5.tar.gz"
-  sha256 "66f679115dd30559e110498fc94d926949d4d370b4999a042e724b8e910ee478"
+  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.6/gnuplot-5.4.6.tar.gz"
+  sha256 "bef7b9618079c724f19d3b0e1d7830b5b407a56b303f2b9e3690a4ce8ce0a89c"
   license "gnuplot"
 
   head do
@@ -60,7 +60,7 @@ class Gnuplot < Formula
     system "make"
     # system "make", "check" if build.head?
     system "make", "install"
-    (pkgshare/"5.5").install "demo" if build.head?
+    (pkgshare/"6.1").install "demo" if build.head?
   end
 
   test do
