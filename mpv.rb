@@ -8,7 +8,7 @@ class Mpv < Formula
 
   depends_on "docutils" => :build
   depends_on "pkg-config" => :build
-  depends_on "python@3.10" => :build
+  depends_on "python@3.11" => :build
   depends_on xcode: :build
 
   depends_on "darkbrow/repo/ffmpeg"
@@ -64,7 +64,7 @@ class Mpv < Formula
       --disable-debug-build
     ]
  
-    python3 = "python3.10"
+    python3 = "python3.11"
     system python3, "bootstrap.py"
     system python3, "waf", "configure", *args
     system python3, "waf", "install"
