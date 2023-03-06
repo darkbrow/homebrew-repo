@@ -55,7 +55,7 @@ class Macvim < Formula
 
     prefix.install "src/MacVim/build/Release/MacVim.app"
     # Remove autoupdating universal binaries
-    (prefix/"MacVim.app/Contents/Frameworks/Sparkle.framework").rmtree
+    # (prefix/"MacVim.app/Contents/Frameworks/Sparkle.framework").rmtree
     bin.install_symlink prefix/"MacVim.app/Contents/bin/mvim"
 
     # Create MacVim vimdiff, view, ex equivalents
