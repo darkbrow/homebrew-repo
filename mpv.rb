@@ -67,7 +67,21 @@ class Mpv < Formula
     python3 = "python3.11"
     system python3, "bootstrap.py"
     system python3, "waf", "configure", *args
-    system python3, "waf", "install"
+    # system python3, "waf", "install"
+
+    ## build app bundle -start-
+    system python3, "waf", "build"
+    system python3, "./TOOLS/osxbundle.py", "build/mpv"
+
+    # correct version string in info.plist
+    system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
+
+    # install & link command line support files
+    prefix.install "build/mpv.app"
+    bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
+    zsh_completion.install "etc/_mpv.zsh"
+    man1.install "build/DOCS/man/mpv.1"
+    ## build app bundle -end-
   end
 
   test do
