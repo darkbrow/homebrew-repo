@@ -1,28 +1,27 @@
 class Mpv < Formula
   desc "Media player based on MPlayer and mplayer2"
   homepage "https://mpv.io"
-  url "https://github.com/mpv-player/mpv/archive/v0.35.0.tar.gz"
-  sha256 "dc411c899a64548250c142bf1fa1aa7528f1b4398a24c86b816093999049ec00"
+  url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.35.1.tar.gz"
+  sha256 "41df981b7b84e33a2ef4478aaf81d6f4f5c8b9cd2c0d337ac142fc20b387d1a9"
   license :cannot_represent
   head "https://github.com/mpv-player/mpv.git", branch: "master"
 
   depends_on "docutils" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.11" => :build
+  depends_on "meson" => :build
+  depends_on "pkg-config" => [:build, :test]
   depends_on xcode: :build
-
   depends_on "darkbrow/repo/ffmpeg"
   depends_on "jpeg-turbo"
   depends_on "libarchive"
   depends_on "libass"
-  depends_on "darkbrow/repo/libsixel"
-  depends_on "darkbrow/repo/libcaca"
   depends_on "little-cms2"
   depends_on "luajit"
   depends_on "mujs"
   depends_on "uchardet"
   depends_on "vapoursynth"
   depends_on "yt-dlp"
+  depends_on "darkbrow/repo/libsixel"
+  depends_on "darkbrow/repo/libcaca"
 
   on_linux do
     depends_on "alsa-lib"
@@ -36,56 +35,49 @@ class Mpv < Formula
     # that's good enough for building the manpage.
     ENV["LC_ALL"] = "C"
 
-    # Avoid unreliable macOS SDK version detection
-    # See https://github.com/mpv-player/mpv/pull/8939
-    if OS.mac?
-      sdk = (MacOS.version == :big_sur) ? MacOS::Xcode.sdk : MacOS.sdk
-      ENV["MACOS_SDK"] = sdk.path
-      ENV["MACOS_SDK_VERSION"] = "#{sdk.version}.0"
-    end
-
+    # force meson find ninja from homebrew
+    ENV["NINJA"] = Formula["ninja"].opt_bin/"ninja"
+    
     # libarchive is keg-only
     ENV.prepend_path "PKG_CONFIG_PATH", Formula["libarchive"].opt_lib/"pkgconfig"
 
     args = %W[
-      --prefix=#{prefix}
-      --enable-html-build
-      --enable-javascript
-      --enable-libmpv-shared
-      --enable-lua
-      --enable-libarchive
-      --enable-uchardet
-      --confdir=#{etc}/mpv
+      -Dhtml-build=enabled
+      -Djavascript=enabled
+      -Dlibmpv=true
+      -Dlua=luajit
+      -Dlibarchive=enabled
+      -Duchardet=enabled
+      --sysconfdir=#{pkgetc}
       --datadir=#{pkgshare}
       --mandir=#{man}
-      --docdir=#{doc}
-      --zshdir=#{zsh_completion}
-      --lua=luajit
-      --disable-debug-build
+      -Ddebug=false
     ]
  
-    python3 = "python3.11"
-    system python3, "bootstrap.py"
-    system python3, "waf", "configure", *args
-    # system python3, "waf", "install"
+    system "meson", "setup", "build", *args, *std_meson_args
+    system "meson", "compile", "-C", "build", "--verbose"
+    system "meson", "install", "-C", "build"
 
-    ## build app bundle -start-
-    system python3, "waf", "build"
-    system python3, "./TOOLS/osxbundle.py", "build/mpv"
+    if OS.mac?
+      # `pkg-config --libs mpv` includes libarchive, but that package is
+      # keg-only so it needs to look for the pkgconfig file in libarchive's opt
+      # path.
+      libarchive = Formula["libarchive"].opt_prefix
+      inreplace lib/"pkgconfig/mpv.pc" do |s|
+        s.gsub!(/^Requires\.private:(.*)\blibarchive\b(.*?)(,.*)?$/,
+                "Requires.private:\\1#{libarchive}/lib/pkgconfig/libarchive.pc\\3")
+      end
+    end
 
-    # correct version string in info.plist
-    system "plutil", "-replace", "CFBundleShortVersionString", "-string", "#{version}", "build/mpv.app/Contents/Info.plist"
-
-    # install & link command line support files
-    prefix.install "build/mpv.app"
-    bin.install_symlink prefix/"mpv.app/Contents/MacOS/mpv"
-    zsh_completion.install "etc/_mpv.zsh"
-    man1.install "build/DOCS/man/mpv.1"
-    ## build app bundle -end-
+    bash_completion.install "etc/mpv.bash-completion" => "mpv"
+    zsh_completion.install "etc/_mpv.zsh" => "_mpv"
   end
 
   test do
     system bin/"mpv", "--ao=null", "--vo=null", test_fixtures("test.wav")
     assert_match "vapoursynth", shell_output(bin/"mpv --vf=help")
+
+    # Make sure `pkg-config` can parse `mpv.pc` after the `inreplace`.
+    system "pkg-config", "mpv"
   end
 end
