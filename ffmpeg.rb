@@ -59,6 +59,8 @@ class Ffmpeg < Formula
   depends_on "zeromq"
   depends_on "zimg"
 
+  depends_on "librsvg"
+
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
@@ -127,6 +129,7 @@ class Ffmpeg < Formula
       --enable-nonfree
       --enable-libcaca
       --enable-libfdk-aac
+      --enable-librsvg
     ]
 
     # Needs corefoundation, coremedia, corevideo
