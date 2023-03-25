@@ -29,7 +29,10 @@ class W3m < Formula
   depends_on "pkg-config" => :build
   depends_on "bdw-gc"
   depends_on "darkbrow/repo/libsixel"
-  depends_on "openssl@1.1"
+  depends_on "openssl@3"
+  depends_on "gdk-pixbuf"
+  depends_on "imlib2"
+  depends_on "darkbrow/repo/libsixel"
 
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
@@ -45,7 +48,8 @@ class W3m < Formula
 
     system "./configure", "--prefix=#{prefix}",
                           "--enable-image",
-                          "--with-ssl=#{Formula["openssl@1.1"].opt_prefix}"
+                          "--with-imagelib=gdk-pixbuf imlib2",
+                          "--with-ssl=#{Formula["openssl@3"].opt_prefix}"
     system "make", "install"
   end
 
