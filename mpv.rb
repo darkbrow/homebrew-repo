@@ -4,6 +4,7 @@ class Mpv < Formula
   url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.35.1.tar.gz"
   sha256 "41df981b7b84e33a2ef4478aaf81d6f4f5c8b9cd2c0d337ac142fc20b387d1a9"
   license :cannot_represent
+  revision 1
   head "https://github.com/mpv-player/mpv.git", branch: "master"
 
   depends_on "docutils" => :build
@@ -27,8 +28,6 @@ class Mpv < Formula
     depends_on "alsa-lib"
   end
 
-  fails_with gcc: "5" # ffmpeg is compiled with GCC
-
   def install
     # LANG is unset by default on macOS and causes issues when calling getlocale
     # or getdefaultlocale in docutils. Force the default c/posix locale since
@@ -37,7 +36,7 @@ class Mpv < Formula
 
     # force meson find ninja from homebrew
     ENV["NINJA"] = Formula["ninja"].opt_bin/"ninja"
-    
+
     # libarchive is keg-only
     ENV.prepend_path "PKG_CONFIG_PATH", Formula["libarchive"].opt_lib/"pkgconfig"
 
@@ -53,7 +52,7 @@ class Mpv < Formula
       --mandir=#{man}
       -Ddebug=false
     ]
- 
+
     system "meson", "setup", "build", *args, *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
