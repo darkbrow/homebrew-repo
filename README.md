@@ -20,7 +20,6 @@ brew install --build-from-source /path/to/downloaded/formula
 - add ncurses, slang to CACA_DRIVER.
 
 ## libsixel.rb
-- new formula (doesn't exist on homebrew due to incompatible license).
 - add png, gd, python support.
 
 ## macvim.rb
