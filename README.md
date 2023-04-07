@@ -30,9 +30,6 @@ brew install --build-from-source /path/to/downloaded/formula
 - disable debug-build option.
 - enable libcaca output.
 
-## sc-im.rb
-- add libxls support.
-
 ## unrar.rb
 - remove deprecation warning.
 
