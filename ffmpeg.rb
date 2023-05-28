@@ -13,16 +13,6 @@ class Ffmpeg < Formula
     regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
-  bottle do
-    sha256 arm64_ventura:  "2bc7a6242f47c344e31233260416421f643a7da50131305eecc8e1c6cf79f2f7"
-    sha256 arm64_monterey: "846a6c6e7def029977275bf80c194a64c25d21f3dbe85caf9e2d9485c7eadab1"
-    sha256 arm64_big_sur:  "27d5700ec5c3565dc5bba6daee726d3992478f5a5a992bbd69c3d5049bc66fee"
-    sha256 ventura:        "5000a047d8b104df680ba42f567b6a283aabfd4ea4d59b5242ea6436ce263b31"
-    sha256 monterey:       "cbe440ecab83b5737e589422ef3c29999f2827ab52a24a1a2bd5967d48bbf754"
-    sha256 big_sur:        "32184c461d5ed6aa4b15603a21db93484d86d09f0e77805aa9470731668ff5b2"
-    sha256 x86_64_linux:   "d8bd2578043eee0785dfb5eb8c7fd7cf77236d86a36e13d5ee7a5a8bb0316d5b"
-  end
-
   depends_on "pkg-config" => :build
   depends_on "aom"
   depends_on "aribb24"
@@ -60,12 +50,11 @@ class Ffmpeg < Formula
   depends_on "zeromq"
   depends_on "zimg"
 
-  depends_on "librsvg"
-
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
+  depends_on "librsvg"
   depends_on "fdk-aac"
   depends_on "darkbrow/repo/libcaca"
 
@@ -136,11 +125,7 @@ class Ffmpeg < Formula
     ]
 
     # Needs corefoundation, coremedia, corevideo
-    if OS.mac?
-      args << "--enable-audiotoolbox"
-      args << "--enable-opencl"
-      args << "--enable-videotoolbox"
-    end
+    args += %w[--enable-videotoolbox --enable-audiotoolbox --enable-opencl] if OS.mac?
     args << "--enable-neon" if Hardware::CPU.arm?
 
     system "./configure", *args
