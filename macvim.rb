@@ -2,16 +2,24 @@
 class Macvim < Formula
   desc "GUI for vim, made for macOS"
   homepage "https://github.com/macvim-dev/macvim"
-  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-176.tar.gz"
-  version "9.0.1276"
-  sha256 "e729964b4979f42fd2701236adb9bea35c6cf3981aa02ae7790a240fb92cf39e"
+  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-178.tar.gz"
+  version "9.0.1897"
+  sha256 "ec614f8609aa61948e01c8ea57f133e29c9a3f67375dde65747ba537d8a713e6"
   license "Vim"
   head "https://github.com/macvim-dev/macvim.git", branch: "master"
 
+  # The stable Git tags use a `release-123` format and it's necessary to check
+  # the GitHub release description to identify the Vim version from the
+  # "Updated to Vim 1.2.3456" text.
   livecheck do
-    url "https://github.com/macvim-dev/macvim/releases?q=prerelease%3Afalse&expanded=true"
+    url :stable
     regex(/Updated\s+to\s+Vim\s+v?(\d+(?:\.\d+)+)/i)
-    strategy :page_match
+    strategy :github_latest do |json, regex|
+      match = json["body"]&.match(regex)
+      next if match.blank?
+
+      match[1]
+    end
   end
 
   depends_on "gettext" => :build
@@ -61,8 +69,6 @@ class Macvim < Formula
     system "make"
 
     prefix.install "src/MacVim/build/Release/MacVim.app"
-    # Remove autoupdating universal binaries
-    # (prefix/"MacVim.app/Contents/Frameworks/Sparkle.framework").rmtree
     bin.install_symlink prefix/"MacVim.app/Contents/bin/mvim"
 
     # Create MacVim vimdiff, view, ex equivalents
