@@ -1,9 +1,14 @@
 class Gnuplot < Formula
   desc "Command-driven, interactive function plotting"
   homepage "http://www.gnuplot.info/"
-  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.8/gnuplot-5.4.8.tar.gz"
-  sha256 "931279c7caad1aff7d46cb4766f1ff41c26d9be9daf0bcf0c79deeee3d91f5cf"
+  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.10/gnuplot-5.4.10.tar.gz"
+  sha256 "975d8c1cc2c41c7cedc4e323aff035d977feb9a97f0296dd2a8a66d197a5b27c"
   license "gnuplot"
+
+  livecheck do
+    url :stable
+    regex(%r{url=.*?/gnuplot[._-]v?(\d+(?:\.\d+)+)\.t}i)
+  end
 
   head do
     url "https://git.code.sf.net/p/gnuplot/gnuplot-main.git", branch: "master"
@@ -18,7 +23,7 @@ class Gnuplot < Formula
   depends_on "libcerf"
   depends_on "lua"
   depends_on "pango"
-  depends_on "qt@5"
+  depends_on "qt"
   depends_on "readline"
 
   depends_on "darkbrow/repo/libcaca"
@@ -26,15 +31,9 @@ class Gnuplot < Formula
   fails_with gcc: "5"
 
   def install
-    # Qt5 requires c++11 (and the other backends do not care)
-    ENV.cxx11
-
     args = %W[
-      --disable-dependency-tracking
       --disable-silent-rules
-      --prefix=#{prefix}
       --with-readline=#{Formula["readline"].opt_prefix}
-      --without-tutorial
       --disable-wxwidgets
       --with-qt
       --without-x
@@ -52,10 +51,34 @@ class Gnuplot < Formula
       --with-metapost
       --with-regis
       --with-tutorial
+      LRELEASE=#{Formula["qt"].bin}/lrelease
+      MOC=#{Formula["qt"].pkgshare}/libexec/moc
+      RCC=#{Formula["qt"].pkgshare}/libexec/rcc
+      UIC=#{Formula["qt"].pkgshare}/libexec/uic
     ]
 
+    if OS.mac?
+      # pkg-config files are not shipped on macOS, making our job harder
+      # https://bugreports.qt.io/browse/QTBUG-86080
+      # Hopefully in the future gnuplot can autodetect this information
+      # https://sourceforge.net/p/gnuplot/feature-requests/560/
+      qtcflags = []
+      qtlibs = %W[-F#{Formula["qt"].opt_prefix}/Frameworks]
+      %w[Core Gui Network Svg PrintSupport Widgets Core5Compat].each do |m|
+        qtcflags << "-I#{Formula["qt"].opt_include}/Qt#{m}"
+        qtlibs << "-framework Qt#{m}"
+      end
+
+      args += %W[
+        QT_CFLAGS=#{qtcflags.join(" ")}
+        QT_LIBS=#{qtlibs.join(" ")}
+      ]
+    end
+
+    ENV.append "CXXFLAGS", "-std=c++17" # needed for Qt 6
     system "./prepare" if build.head?
-    system "./configure", *args
+    system "./configure", *std_configure_args.reject { |s| s["--disable-debug"] },
+                          *args
     ENV.deparallelize # or else emacs tries to edit the same file with two threads
     system "make"
     # system "make", "check" if build.head?
