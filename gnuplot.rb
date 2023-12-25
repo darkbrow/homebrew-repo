@@ -18,6 +18,8 @@ class Gnuplot < Formula
     depends_on "libtool" => :build
   end
 
+  option "with-demo", "install demo script files"
+
   depends_on "pkg-config" => :build
   depends_on "gd"
   depends_on "libcerf"
@@ -83,7 +85,14 @@ class Gnuplot < Formula
     system "make"
     # system "make", "check" if build.head?
     system "make", "install"
-    (pkgshare/"6.1").install "demo" if build.head?
+    if build.with? "demo"
+      head do
+        (pkgshare/"6.1").install "demo"
+      end
+      stable do
+        (pkgshare/"5.4").install "demo"
+      end
+    end
   end
 
   test do
