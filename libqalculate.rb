@@ -1,8 +1,8 @@
 class Libqalculate < Formula
   desc "Library for Qalculate! program"
   homepage "https://qalculate.github.io/"
-  url "https://github.com/Qalculate/libqalculate/releases/download/v4.6.1/libqalculate-4.6.1.tar.gz"
-  sha256 "ed087bfdedea0fd0eb26eb37a25e4c55caccfe96d83933a3573c93241458cab3"
+  url "https://github.com/Qalculate/libqalculate/releases/download/v4.9.0/libqalculate-4.9.0.tar.gz"
+  sha256 "6130ed28f7fb8688bccede4f3749b7f75e4a000b8080840794969d21d1c1bf0f"
   license "GPL-2.0-or-later"
 
   depends_on "intltool" => :build
@@ -14,6 +14,10 @@ class Libqalculate < Formula
 
   uses_from_macos "perl" => :build
   uses_from_macos "curl"
+
+  on_linux do
+    depends_on "perl-xml-parser" => :build
+  end
 
   def install
     ENV.prepend_path "PERL5LIB", Formula["intltool"].libexec/"lib/perl5" unless OS.mac?
