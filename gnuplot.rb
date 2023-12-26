@@ -18,6 +18,7 @@ class Gnuplot < Formula
     depends_on "libtool" => :build
   end
 
+  option "with-test", "show test"
   option "with-demo", "install demo script files"
 
   depends_on "pkg-config" => :build
@@ -83,15 +84,12 @@ class Gnuplot < Formula
                           *args
     ENV.deparallelize # or else emacs tries to edit the same file with two threads
     system "make"
-    # system "make", "check" if build.head?
+    if build.with? "test"
+      system "make", "check"
+    end
     system "make", "install"
     if build.with? "demo"
-      head do
-        (pkgshare/"6.1").install "demo"
-      end
-      stable do
-        (pkgshare/"5.4").install "demo"
-      end
+        (pkgshare).install "demo"
     end
   end
 
