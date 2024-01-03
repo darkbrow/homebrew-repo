@@ -4,7 +4,7 @@ class Cmus < Formula
   url "https://github.com/cmus/cmus/archive/v2.10.0.tar.gz"
   sha256 "ff40068574810a7de3990f4f69c9c47ef49e37bd31d298d372e8bcdafb973fff"
   license "GPL-2.0-or-later"
-  revision 2
+  revision 3
   head "https://github.com/cmus/cmus.git", branch: "master"
 
   depends_on "pkg-config" => :build
@@ -17,6 +17,7 @@ class Cmus < Formula
   depends_on "libvorbis"
   depends_on "mad"
   depends_on "mp4v2"
+  depends_on "ncurses"
   depends_on "opusfile"
 
   on_linux do
