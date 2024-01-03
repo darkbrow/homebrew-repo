@@ -1,8 +1,8 @@
 class Gnuplot < Formula
   desc "Command-driven, interactive function plotting"
   homepage "http://www.gnuplot.info/"
-  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.4.10/gnuplot-5.4.10.tar.gz"
-  sha256 "975d8c1cc2c41c7cedc4e323aff035d977feb9a97f0296dd2a8a66d197a5b27c"
+  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/6.0.0/gnuplot-6.0.0.tar.gz"
+  sha256 "635a28f0993f6ab0d1179e072ad39b8139d07f51237f841d93c6c2ff4b1758ec"
   license "gnuplot"
 
   livecheck do
@@ -21,6 +21,7 @@ class Gnuplot < Formula
   option "with-test", "show test"
   option "with-demo", "install demo script files"
 
+  depends_on "gnu-sed" => :build # https://sourceforge.net/p/gnuplot/bugs/2676/
   depends_on "pkg-config" => :build
   depends_on "gd"
   depends_on "libcerf"
@@ -41,6 +42,10 @@ class Gnuplot < Formula
       --with-qt
       --without-x
       --without-latex
+      LRELEASE=#{Formula["qt"].bin}/lrelease
+      MOC=#{Formula["qt"].pkgshare}/libexec/moc
+      RCC=#{Formula["qt"].pkgshare}/libexec/rcc
+      UIC=#{Formula["qt"].pkgshare}/libexec/uic
       --enable-history-file
       --enable-largefile
       --enable-objects
@@ -54,11 +59,10 @@ class Gnuplot < Formula
       --with-metapost
       --with-regis
       --with-tutorial
-      LRELEASE=#{Formula["qt"].bin}/lrelease
-      MOC=#{Formula["qt"].pkgshare}/libexec/moc
-      RCC=#{Formula["qt"].pkgshare}/libexec/rcc
-      UIC=#{Formula["qt"].pkgshare}/libexec/uic
     ]
+    
+    # https://sourceforge.net/p/gnuplot/bugs/2676/
+    ENV.prepend_path "PATH", Formula["gnu-sed"].opt_libexec/"gnubin"
 
     if OS.mac?
       # pkg-config files are not shipped on macOS, making our job harder
