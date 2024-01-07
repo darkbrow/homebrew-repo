@@ -1,8 +1,8 @@
 class Unrar < Formula
   desc "Extract, view, and test RAR archives"
   homepage "https://www.rarlab.com/"
-  url "https://www.rarlab.com/rar/unrarsrc-6.1.7.tar.gz"
-  sha256 "de75b6136958173fdfc530d38a0145b72342cf0d3842bf7bb120d336602d88ed"
+  url "https://www.rarlab.com/rar/unrarsrc-6.2.12.tar.gz"
+  sha256 "a008b5f949bca9bb4ffa1bebbfc8b3c14b89df10a10354809b845232d5f582e5"
 
   livecheck do
     url "https://www.rarlab.com/rar_add.htm"
@@ -10,6 +10,8 @@ class Unrar < Formula
   end
 
   def install
+    ENV.cxx11
+
     # upstream doesn't particularly care about their unix targets,
     # so we do the dirty work of renaming their shared objects to
     # dylibs for them.
