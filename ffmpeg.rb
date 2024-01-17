@@ -131,7 +131,7 @@ class Ffmpeg < Formula
       --enable-libopencore-amrnb
       --enable-libopencore-amrwb
       --enable-libopenjpeg
-      --enable-openvino
+      --enable-libopenvino
       --enable-libspeex
       --enable-libsoxr
       --enable-libzmq
