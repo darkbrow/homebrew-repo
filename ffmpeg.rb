@@ -6,7 +6,7 @@ class Ffmpeg < Formula
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
-  revision 1
+  revision 2
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
 
   livecheck do
@@ -29,12 +29,14 @@ class Ffmpeg < Formula
   depends_on "libbluray"
   depends_on "librist"
   depends_on "libsoxr"
+  depends_on "libssh"
   depends_on "libvidstab"
   depends_on "libvmaf"
   depends_on "libvorbis"
   depends_on "libvpx"
   depends_on "opencore-amr"
   depends_on "openjpeg"
+  depends_on "openvino"
   depends_on "opus"
   depends_on "rav1e"
   depends_on "rubberband"
@@ -108,6 +110,7 @@ class Ffmpeg < Formula
       --enable-librubberband
       --enable-libsnappy
       --enable-libsrt
+      --enable-libssh
       --enable-libsvtav1
       --enable-libtesseract
       --enable-libtheora
@@ -128,6 +131,7 @@ class Ffmpeg < Formula
       --enable-libopencore-amrnb
       --enable-libopencore-amrwb
       --enable-libopenjpeg
+      --enable-openvino
       --enable-libspeex
       --enable-libsoxr
       --enable-libzmq
