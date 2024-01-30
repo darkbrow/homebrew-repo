@@ -18,7 +18,7 @@ class ScIm < Formula
 
   def install
     # Enable plotting with `gnuplot` if available.
-    ENV.append_to_cflags "-DGNUPLOT"
+    ENV.append_to_cflags "-DGNUPLOT -Wno-error=implicit-function-declaration"
 
     cd "src" do
       inreplace "Makefile" do |s|
