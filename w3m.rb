@@ -29,14 +29,14 @@ class W3m < Formula
 
   depends_on "pkg-config" => :build
   depends_on "bdw-gc"
-  depends_on "darkbrow/repo/libsixel"
   depends_on "openssl@3"
-  depends_on "gdk-pixbuf"
-  depends_on "imlib2"
-  depends_on "darkbrow/repo/libsixel"
 
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
+
+  depends_on "gdk-pixbuf"
+  depends_on "imlib2"
+  depends_on "darkbrow/repo/libsixel"
 
   on_linux do
     depends_on "gettext"
@@ -44,8 +44,8 @@ class W3m < Formula
   end
 
   def install
-    # Work around configure issues with Xcode 12
-    ENV.append "CFLAGS", "-Wno-implicit-function-declaration"
+    # Fix compile with newer Clang
+    ENV.append_to_cflags "-Wno-implicit-function-declaration" if DevelopmentTools.clang_build_version >= 1200
 
     system "./configure", "--prefix=#{prefix}",
                           "--enable-image",

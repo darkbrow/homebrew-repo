@@ -4,6 +4,7 @@ class ScIm < Formula
   url "https://github.com/andmarti1424/sc-im/archive/v0.8.3.tar.gz"
   sha256 "5568f9987b6d26535c0e7a427158848f1bc03d829f74e41cbcf007d8704e9bd3"
   license "BSD-4-Clause"
+  revision 1
   head "https://github.com/andmarti1424/sc-im.git", branch: "main"
 
   depends_on "pkg-config" => :build
@@ -17,8 +18,11 @@ class ScIm < Formula
   uses_from_macos "bison" => :build
 
   def install
+    # Workaround for Xcode 14.3
+    ENV.append_to_cflags "-Wno-implicit-function-declaration" if DevelopmentTools.clang_build_version >= 1403
+
     # Enable plotting with `gnuplot` if available.
-    ENV.append_to_cflags "-DGNUPLOT -Wno-error=implicit-function-declaration"
+    ENV.append_to_cflags "-DGNUPLOT"
 
     cd "src" do
       inreplace "Makefile" do |s|

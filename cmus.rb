@@ -1,10 +1,9 @@
 class Cmus < Formula
   desc "Music player with an ncurses based interface"
   homepage "https://cmus.github.io/"
-  url "https://github.com/cmus/cmus/archive/v2.10.0.tar.gz"
-  sha256 "ff40068574810a7de3990f4f69c9c47ef49e37bd31d298d372e8bcdafb973fff"
+  url "https://github.com/cmus/cmus/archive/refs/tags/v2.11.0.tar.gz"
+  sha256 "2bbdcd6bbbae301d734214eab791e3755baf4d16db24a44626961a489aa5e0f7"
   license "GPL-2.0-or-later"
-  revision 3
   head "https://github.com/cmus/cmus.git", branch: "master"
 
   depends_on "pkg-config" => :build
