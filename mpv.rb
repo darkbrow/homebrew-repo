@@ -16,6 +16,7 @@ class Mpv < Formula
   depends_on "libass"
   depends_on "libbluray"
   depends_on "libplacebo"
+  depends_on "libsamplerate"
   depends_on "little-cms2"
   depends_on "luajit"
   depends_on "mujs"
@@ -27,6 +28,15 @@ class Mpv < Formula
   depends_on "zimg"
 
   uses_from_macos "zlib"
+
+  on_macos do
+    depends_on "molten-vk"
+  end
+
+  on_linux do
+    depends_on "alsa-lib"
+    depends_on "pulseaudio"
+  end
 
   depends_on "darkbrow/repo/libsixel"
   depends_on "darkbrow/repo/libcaca"
