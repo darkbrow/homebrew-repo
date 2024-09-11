@@ -1,8 +1,8 @@
 class Gnuplot < Formula
   desc "Command-driven, interactive function plotting"
   homepage "http://www.gnuplot.info/"
-  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/6.0.0/gnuplot-6.0.0.tar.gz"
-  sha256 "635a28f0993f6ab0d1179e072ad39b8139d07f51237f841d93c6c2ff4b1758ec"
+  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/6.0.1/gnuplot-6.0.1.tar.gz"
+  sha256 "e85a660c1a2a1808ff24f7e69981ffcbac66a45c9dcf711b65610b26ea71379a"
   license "gnuplot"
 
   livecheck do
@@ -23,15 +23,24 @@ class Gnuplot < Formula
 
   depends_on "gnu-sed" => :build # https://sourceforge.net/p/gnuplot/bugs/2676/
   depends_on "pkg-config" => :build
+
+  depends_on "cairo"
   depends_on "gd"
+  depends_on "glib"
   depends_on "libcerf"
   depends_on "lua"
   depends_on "pango"
   depends_on "qt"
   depends_on "readline"
+  depends_on "webp"
 
   depends_on "darkbrow/repo/libcaca"
 
+  on_macos do
+    depends_on "gettext"
+    depends_on "harfbuzz"
+  end
+  
   fails_with gcc: "5"
 
   def install

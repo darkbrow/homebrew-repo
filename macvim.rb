@@ -33,7 +33,8 @@ class Macvim < Formula
 
   depends_on "tcl-tk"
 
-  conflicts_with "vim", because: "vim and macvim both install vi* binaries"
+  conflicts_with "ex-vi", because: "both install `vi` and `view` binaries"
+  conflicts_with "vim", because: "both install vi* binaries"
 
   def install
     # Avoid issues finding Ruby headers
@@ -69,7 +70,7 @@ class Macvim < Formula
     system "make"
 
     prefix.install "src/MacVim/build/Release/MacVim.app"
-    bin.install_symlink prefix/"MacVim.app/Contents/bin/mvim"
+    %w[gvimtutor mvim vimtutor xxd].each { |e| bin.install_symlink prefix/"MacVim.app/Contents/bin/#{e}" }
 
     # Create MacVim vimdiff, view, ex equivalents
     executables = %w[mvimdiff mview mvimex gvim gvimdiff gview gvimex]

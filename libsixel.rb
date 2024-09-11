@@ -13,13 +13,14 @@ class Libsixel < Formula
   depends_on "gd"
 
   def install
-    system "meson", *std_meson_args, "build", "-Dgdk-pixbuf2=disabled", "-Dtests=disabled"
-    system "meson", "compile", "-C", "build", "-v"
+    system "meson", "setup", "build", "-Dgdk-pixbuf2=disabled", "-Dtests=disabled", *std_meson_args
+    # system "meson", *std_meson_args, "build", "-Dgdk-pixbuf2=disabled", "-Dtests=disabled"
+    system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
   end
 
   test do
     fixture = test_fixtures("test.png")
-    system "#{bin}/img2sixel", fixture
+    system bin/"img2sixel", fixture
   end
 end

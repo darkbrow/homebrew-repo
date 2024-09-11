@@ -1,14 +1,20 @@
 class QalculateQt < Formula
   desc "Multi-purpose desktop calculator"
   homepage "https://qalculate.github.io/"
-  url "https://github.com/Qalculate/qalculate-qt/releases/download/v5.1.0/qalculate-qt-5.1.0.tar.gz"
-  sha256 "b6571fc85bde7f2b1422f215a5c4176bc1013726e2971d4c27770078be659a7b"
+  url "https://github.com/Qalculate/qalculate-qt/releases/download/v5.2.0/qalculate-qt-5.2.0.tar.gz"
+  sha256 "6daef548376d1a941515f3ee5c268ec97a64668474ff6c31e02890eee12f2b75"
   license "GPL-2.0-or-later"
   head "https://github.com/Qalculate/qalculate-qt.git", branch: "main"
 
   depends_on "pkg-config" => :build
+
   depends_on "darkbrow/repo/libqalculate"
   depends_on "qt"
+
+  on_macos do
+    depends_on "gmp"
+    depends_on "mpfr"
+  end
 
   def install
     system Formula["qt"].bin/"qmake", "qalculate-qt.pro"
