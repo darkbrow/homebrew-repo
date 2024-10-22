@@ -1,8 +1,8 @@
 class Mpv < Formula
   desc "Media player based on MPlayer and mplayer2"
   homepage "https://mpv.io"
-  url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.38.0.tar.gz"
-  sha256 "86d9ef40b6058732f67b46d0bbda24a074fae860b3eaae05bab3145041303066"
+  url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.39.0.tar.gz"
+  sha256 "2ca92437affb62c2b559b4419ea4785c70d023590500e8a52e95ea3ab4554683"
   license :cannot_represent
   head "https://github.com/mpv-player/mpv.git", branch: "master"
 
@@ -27,10 +27,10 @@ class Mpv < Formula
   depends_on "yt-dlp"
   depends_on "zimg"
 
+  uses_from_macos "zlib"
+
   depends_on "darkbrow/repo/libsixel"
   depends_on "darkbrow/repo/libcaca"
-
-  uses_from_macos "zlib"
 
   on_macos do
     depends_on "molten-vk"
