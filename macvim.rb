@@ -65,8 +65,7 @@ class Macvim < Formula
                           "--enable-luainterp",
                           "--enable-python3interp",
                           "--disable-sparkle",
-                          "--with-macarchs=#{Hardware::CPU.arch}",
-                          "--with-tclsh=tclsh8.6"
+                          "--with-macarchs=#{Hardware::CPU.arch}"
     system "make"
 
     prefix.install "src/MacVim/build/Release/MacVim.app"
