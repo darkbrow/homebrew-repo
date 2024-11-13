@@ -5,9 +5,10 @@ class Libqalculate < Formula
   sha256 "61dd60b1d43ad3d2944cff9b2f45c9bc646c5a849c621133ef07231e8289e35b"
   license "GPL-2.0-or-later"
 
+  depends_on "gettext" => :build
   depends_on "intltool" => :build
   depends_on "pkg-config" => :build
-  depends_on "gettext"
+  depends_on "gmp"
   depends_on "darkbrow/repo/gnuplot"
   depends_on "mpfr"
   depends_on "readline"
@@ -17,20 +18,18 @@ class Libqalculate < Formula
   uses_from_macos "libxml2"
 
   on_macos do
-    depends_on "gmp"
+    depends_on "gettext"
   end
 
   on_linux do
     depends_on "perl-xml-parser" => :build
-    depends_on "gmp"
   end
 
   def install
-    ENV.prepend_path "PERL5LIB", Formula["intltool"].libexec/"lib/perl5" unless OS.mac?
     ENV.cxx11
     system "./configure", "--disable-silent-rules",
                           "--without-icu",
-                          *std_configure_args.reject { |s| s["--disable-debug"] }
+                          *std_configure_args
     system "make", "install"
   end
 
