@@ -9,7 +9,7 @@ class Mpv < Formula
   depends_on "docutils" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on xcode: :build
   depends_on "darkbrow/repo/ffmpeg"
   depends_on "jpeg-turbo"
