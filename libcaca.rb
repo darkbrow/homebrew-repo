@@ -22,17 +22,15 @@ class Libcaca < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+  depends_on "imlib2"
   depends_on "ncurses"
   depends_on "slang"
-  depends_on "imlib2"
 
   def install
     system "./bootstrap" if build.head?
 
     args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
       --disable-cocoa
       --disable-csharp
       --disable-doc
