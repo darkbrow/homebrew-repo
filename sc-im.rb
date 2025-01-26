@@ -6,7 +6,7 @@ class ScIm < Formula
   license "BSD-4-Clause"
   head "https://github.com/andmarti1424/sc-im.git", branch: "main"
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libxls"
   depends_on "libxlsxwriter"
   depends_on "libxml2"
