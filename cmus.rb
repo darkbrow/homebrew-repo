@@ -6,7 +6,7 @@ class Cmus < Formula
   license "GPL-2.0-or-later"
   head "https://github.com/cmus/cmus.git", branch: "master"
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "faad2"
   depends_on "darkbrow/repo/ffmpeg"
   depends_on "flac"
