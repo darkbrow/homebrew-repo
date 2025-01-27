@@ -31,6 +31,8 @@ class Libcaca < Formula
     system "./bootstrap" if build.head?
 
     args = %W[
+      --disable-dependency-tracking
+      --prefix=#{prefix}
       --disable-cocoa
       --disable-csharp
       --disable-doc
