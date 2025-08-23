@@ -1,17 +1,17 @@
 class QalculateQt < Formula
   desc "Multi-purpose desktop calculator"
   homepage "https://qalculate.github.io/"
-  url "https://github.com/Qalculate/qalculate-qt/releases/download/v5.5.1/qalculate-qt-5.5.1.tar.gz"
-  sha256 "2d01841f7a7703417c6c251bcd6bcda81db0bf7d5c32827b7a8b396d572af843"
+  url "https://github.com/Qalculate/qalculate-qt/releases/download/v5.7.0/qalculate-qt-5.7.0.tar.gz"
+  sha256 "76e03b976a7b1347a6e8779b6be83ea053ab74e8ddeafb0aa62d20b3fadc0b9c"
   license "GPL-2.0-or-later"
   head "https://github.com/Qalculate/qalculate-qt.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:  "b06ff9fe513cb5cf5001cd191b09c8c216b4ecc0fcb72811758e7887cc5504cc"
-    sha256 cellar: :any,                 arm64_ventura: "0a09e028d074e3e8e8f7b83b43db1f03b2ae21d59a97e12cb09e22ff53849100"
-    sha256 cellar: :any,                 sonoma:        "a612516358a27b4d6c6d44d539b1c46b06d13de1143105b199e56964963e5ffd"
-    sha256 cellar: :any,                 ventura:       "9c64e3a28a9b2fa83c4ba77f289ad8cf163acab3d8b982e67b7cf2333a7da06f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "05413f45291372343722733bc6c2d4d8c1b1d9b77d34a7695d6f5c683bbb9fbb"
+    sha256 cellar: :any,                 arm64_sonoma:  "ecbc0902df9615ab02cc14c7821b763df4cd91815c320790e2d37227dea33ab6"
+    sha256 cellar: :any,                 arm64_ventura: "f2cad1739fd3afa7ccd0d56ba2309f528505de2bdc97120dbe11870d82fe9b78"
+    sha256 cellar: :any,                 sonoma:        "6f457c9182a94f0b80ec5b59f735c88e9e7f58de4af63d52a6ea535be56dbcff"
+    sha256 cellar: :any,                 ventura:       "9c10be6c17d81fd8f881e87e0b4119f115895c310cfeb26fd0e4e99314312fba"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "63e9383503ff926b1bb7c0646624d8589eab2530eb83e52f5a496d5ad52305d2"
   end
   
   depends_on "pkgconf" => :build

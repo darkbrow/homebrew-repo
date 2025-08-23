@@ -1,8 +1,8 @@
 class Gnuplot < Formula
   desc "Command-driven, interactive function plotting"
   homepage "http://www.gnuplot.info/"
-  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/6.0.2/gnuplot-6.0.2.tar.gz"
-  sha256 "f68a3b0bbb7bbbb437649674106d94522c00bf2f285cce0c19c3180b1ee7e738"
+  url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/6.0.3/gnuplot-6.0.3.tar.gz"
+  sha256 "ec52e3af8c4083d4538152b3f13db47f6d29929a3f6ecec5365c834e77f251ab"
   license "gnuplot"
 
   livecheck do
@@ -41,8 +41,6 @@ class Gnuplot < Formula
     depends_on "harfbuzz"
   end
   
-  fails_with gcc: "5"
-
   def install
     args = %W[
       --disable-silent-rules
@@ -93,8 +91,7 @@ class Gnuplot < Formula
 
     ENV.append "CXXFLAGS", "-std=c++17" # needed for Qt 6
     system "./prepare" if build.head?
-    system "./configure", *std_configure_args.reject { |s| s["--disable-debug"] },
-                          *args
+    system "./configure", *args, *std_configure_args.reject { |s| s["--disable-debug"] }
     ENV.deparallelize # or else emacs tries to edit the same file with two threads
     system "make"
     if build.with? "test"

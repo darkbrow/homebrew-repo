@@ -4,16 +4,17 @@ class Mpv < Formula
   url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.40.0.tar.gz"
   sha256 "10a0f4654f62140a6dd4d380dcf0bbdbdcf6e697556863dc499c296182f081a3"
   license :cannot_represent
+  revision 3
   head "https://github.com/mpv-player/mpv.git", branch: "master"
 
   bottle do
-    sha256 arm64_sequoia: "5955cf22cdde31fa7f6968d63af6bc9349b46cc8b0b8c16106a0b6472f4a37ef"
-    sha256 arm64_sonoma:  "6f109ef9959b7a8cf389253c951d522da82102156679fe3b2c83d96d21bbe982"
-    sha256 arm64_ventura: "0cd6d5afa3c9fdf52939b3efe53542669d4dc3eb36bad2fd81fee909cc7894c5"
-    sha256 sonoma:        "fbf379a4b04f73397466692ff0977972862178e93702cdb106ee5f0897f89fb9"
-    sha256 ventura:       "edbd8605a162f20ddcfad0cff8d0f3626c394eef645d89d0329017a2770a101d"
-    sha256 arm64_linux:   "2f2da23614a1d6b915b5016f68e485819a3e7d8bd94a5ef496adcdddd5c9ab87"
-    sha256 x86_64_linux:  "3f8d46888b8a730bbb89dc414f032f3137d8f9cdd6cb410270a31a1bae04674a"
+    sha256 arm64_sequoia: "9bca3581e41200876f4eed25ba9fafe8134323141f70da48ab904a27b2b9848a"
+    sha256 arm64_sonoma:  "0057fb2359b8129667d2838722ab515cdbecd1b6eb8ca988435859c118207ab1"
+    sha256 arm64_ventura: "1351503c5222d9c9e0a21692c88375471986d5f46dd98e1d4866af06b8fd59df"
+    sha256 sonoma:        "1dee2defb8aa01d21df8cc780d1de558f117fdfa41d25195f1e56626864043f6"
+    sha256 ventura:       "e14b40d371f6a2577ef6836ad6d3cf9b68463ad910819e7b694c48f4bb4dc951"
+    sha256 arm64_linux:   "4d1802b9fe1493bd9ca1e2293f0dc1529ccd97a40a985c33b18e198d16137918"
+    sha256 x86_64_linux:  "982d2ffb5ab6d84bd4ac2d6418c87cc428496fde4d529cfc31b9dce4cc1c7c1d"
   end
   
   depends_on "docutils" => :build
@@ -134,7 +135,7 @@ class Mpv < Formula
 
   test do
     system bin/"mpv", "--ao=null", "--vo=null", test_fixtures("test.wav")
-    assert_match "vapoursynth", shell_output(bin/"mpv --vf=help")
+    assert_match "vapoursynth", shell_output("#{bin}/mpv --vf=help")
 
     # Make sure `pkg-config` can parse `mpv.pc` after the `inreplace`.
     system "pkgconf", "--print-errors", "mpv"

@@ -31,8 +31,6 @@ class Libcaca < Formula
     system "./bootstrap" if build.head?
 
     args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
       --disable-cocoa
       --disable-csharp
       --disable-doc
@@ -42,9 +40,10 @@ class Libcaca < Formula
       --disable-x11
       --enable-ncurses
       --enable-slang
+      --disable-dependency-tracking
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make"
     ENV.deparallelize # Or install can fail making the same folder at the same time
     system "make", "install"
