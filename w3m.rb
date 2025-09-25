@@ -33,14 +33,11 @@ class W3m < Formula
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
 
-  depends_on "gdk-pixbuf"
-  depends_on "imlib2"
-  depends_on "darkbrow/repo/libsixel"
+  depends_on "libsixel"
 
   def install
     system "./configure", "--enable-image",
                           "--with-ssl=#{Formula["openssl@3"].opt_prefix}",
-                          "--with-imagelib=gdk-pixbuf imlib2",
                           *std_configure_args
     system "make", "install"
   end
