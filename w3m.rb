@@ -1,39 +1,27 @@
 class W3m < Formula
   desc "Pager/text based browser"
-  homepage "https://w3m.sourceforge.io/"
+  homepage "https://w3m.sourceforge.net/"
+  url "https://git.sr.ht/~rkta/w3m/archive/v0.5.6.tar.gz"
+  sha256 "8dd652cd3f31817d68c7263c34eeffb50118c80be19e1159bf8cbf763037095e"
   license "w3m"
-  head "https://github.com/tats/w3m.git", branch: "master"
+  head "https://git.sr.ht/~rkta/w3m", branch: "master"
 
-  stable do
-    url "https://deb.debian.org/debian/pool/main/w/w3m/w3m_0.5.3+git20230121.orig.tar.xz"
-    sha256 "974d1095a47f1976150a792fe9c5a44cc821c02b6bdd714a37a098386250e03a"
-    version "0.5.3-git20230121"
-
-    # Fix for CVE-2023-4255
-    patch do
-      url "https://sources.debian.org/data/main/w/w3m/0.5.3%2Bgit20230121-2.1/debian/patches/0002-CVE-2023-4255.patch"
-      sha256 "7a84744bae63f3e470b877038da5a221ed8289395d300a904ac5a8626b0a9cea"
-    end
-  end
-
-  livecheck do
-    url "https://deb.debian.org/debian/pool/main/w/w3m/"
-    regex(/href=.*?w3m[._-]v?(\d+(?:\.\d+)+(?:\+git\d+)?)\.orig\.t/i)
-    strategy :page_match do |page, regex|
-      page.scan(regex).map { |match| match.first.tr("+", "-") }
-    end
-  end
-
-  no_autobump! because: :requires_manual_review
-
+  depends_on "gettext" => :build
   depends_on "pkgconf" => :build
   depends_on "bdw-gc"
   depends_on "openssl@3"
 
   uses_from_macos "ncurses"
-  uses_from_macos "zlib"
 
   depends_on "libsixel"
+
+  on_macos do
+    depends_on "gettext"
+  end
+
+  on_linux do
+    depends_on "zlib-ng-compat"
+  end
 
   def install
     system "./configure", "--enable-image",
