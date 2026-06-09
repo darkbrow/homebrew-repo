@@ -2,9 +2,9 @@
 class Macvim < Formula
   desc "GUI for vim, made for macOS"
   homepage "https://github.com/macvim-dev/macvim"
-  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-181.tar.gz"
-  version "9.1.1128"
-  sha256 "ee4127ff18f55f04b69e401fc444c94b9e4d2bf60580ed18e85b78f2e34efbd3"
+  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-183.tar.gz"
+  version "9.2.0321"
+  sha256 "72de6be82087cd4db8d7b5b27ee079fe80d504f12b53065d68d29366fc7025f1"
   license "Vim"
   head "https://github.com/macvim-dev/macvim.git", branch: "master"
 
@@ -22,7 +22,7 @@ class Macvim < Formula
     end
   end
 
-  no_autobump! because: :requires_manual_review
+  # no_autobump! because: :requires_manual_review
 
   depends_on "gettext" => :build
   depends_on "libsodium" => :build
@@ -30,7 +30,7 @@ class Macvim < Formula
   depends_on "cscope"
   depends_on "lua"
   depends_on :macos
-  depends_on "python@3.13"
+  depends_on "python@3.14"
   depends_on "ruby"
 
   conflicts_with "ex-vi", because: "both install `vi` and `view` binaries"
@@ -38,18 +38,9 @@ class Macvim < Formula
   conflicts_with cask: "macvim-app"
 
   def install
-    # Avoid issues finding Ruby headers
-    ENV.delete("SDKROOT")
-
-    # MacVim doesn't have or require any Python package, so unset PYTHONPATH
-    ENV.delete("PYTHONPATH")
-
     # We don't want the deployment target to include the minor version on Big Sur and newer.
     # https://github.com/Homebrew/homebrew-core/issues/111693
     ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version
-
-    # make sure that CC is set to "clang"
-    ENV.clang
 
     system "./configure", "--with-features=huge",
                           "--enable-multibyte",
@@ -69,6 +60,9 @@ class Macvim < Formula
                           "--with-macarchs=#{Hardware::CPU.arch}"
     system "make"
 
+    # Sign with the correct runtime entitlements
+    system "make", "-C", "src", "macvim-signed-adhoc"
+
     prefix.install "src/MacVim/build/Release/MacVim.app"
     %w[gvimtutor mvim vimtutor xxd].each { |e| bin.install_symlink prefix/"MacVim.app/Contents/bin/#{e}" }
 
@@ -85,9 +79,9 @@ class Macvim < Formula
     assert_match "+sodium", output
 
     # Simple test to check if MacVim was linked to Homebrew's Python 3
-    py3_exec_prefix = shell_output(Formula["python@3.11"].opt_libexec/"bin/python-config --exec-prefix")
+    py3_exec_prefix = shell_output("#{Formula["python@3.14"].opt_libexec}/bin/python-config --exec-prefix")
     assert_match py3_exec_prefix.chomp, output
-    (testpath/"commands.vim").write <<~EOS
+    (testpath/"commands.vim").write <<~VIM
       :python3 import vim; vim.current.buffer[0] = 'hello python3'
       :wq
     EOS
