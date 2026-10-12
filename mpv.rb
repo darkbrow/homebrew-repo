@@ -1,39 +1,37 @@
 class Mpv < Formula
   desc "Media player based on MPlayer and mplayer2"
   homepage "https://mpv.io"
-  url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.40.0.tar.gz"
-  sha256 "10a0f4654f62140a6dd4d380dcf0bbdbdcf6e697556863dc499c296182f081a3"
-  license :cannot_represent
-  revision 4
+  license all_of: ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
+  revision 9
+  compatibility_version 1
   head "https://github.com/mpv-player/mpv.git", branch: "master"
 
   stable do
-    url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.40.0.tar.gz"
-    sha256 "10a0f4654f62140a6dd4d380dcf0bbdbdcf6e697556863dc499c296182f081a3"
+    url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.41.0.tar.gz"
+    sha256 "ee21092a5ee427353392360929dc64645c54479aefdb5babc5cfbb5fad626209"
 
-    # Backport support for FFmpeg 8
+    # Backport support for Vapoursynth 74+
     patch do
-      url "https://github.com/mpv-player/mpv/commit/26b29fba02a2782f68e2906f837d21201fc6f1b9.patch?full_index=1"
-      sha256 "ac7e5d8e765186af2da3bef215ec364bd387d43846ee776bd05f01f9b9e679b2"
+      url "https://github.com/mpv-player/mpv/commit/75b2ccfeb1ce4ed5a40ac9860fa74f3d1265e13f.patch?full_index=1"
+      sha256 "3906b98b02071a0d5747a400406494ca69cef7afd8d3eee4a99fdbe40dc90c1f"
+      type :backport
+      resolves "https://github.com/mpv-player/mpv/pull/17731"
     end
   end
 
   bottle do
-    rebuild 1
-    sha256 arm64_sequoia: "2a72093cc0689a0c6341b7abc942ba0ec802490c807ff764ac20edb6f0ead270"
-    sha256 arm64_sonoma:  "8247120427ca93debacb0b079ba30dd9d233e8f8f0705e9a82899a4fee833157"
-    sha256 arm64_ventura: "20afc0a4fe70131481e5a8fcd91a803806965bb76e106a326eae6ee5864bce2f"
-    sha256 sonoma:        "eb40fe0c534999a9771f3666824c0d70488afd06f96c37a1d26821f5537e5fb9"
-    sha256 ventura:       "af91158356583eb46de5fb7dbc999eeee2d2606336fb4276eb5713daf9efa580"
-    sha256 arm64_linux:   "16e483fc11b83570cd434a3f9b44b69afccf90f5091adca702a6200b269a80fb"
-    sha256 x86_64_linux:  "ae8b059abf68381c7f62d9190dca745f36971ad1b0a1080c6d69a05bd3ac5b42"
+    sha256 arm64_golden_gate: "3be8690e865b98a3f3f7527acaa72a097b8d7f4d64d38e9242e472cdc98ccad4"
+    sha256 arm64_tahoe:       "136d94fc3b285de144445862e16b4a988b032dafb74e126bf5172055182b6457"
+    sha256 arm64_sequoia:     "ef4f4e6295d752e686b16750e607ef1955d9df68afce1004744e0462415d1b7a"
+    sha256 arm64_sonoma:      "adeccfdd66dd3d5c1a0a6f44dd400b10d01263e876941f8eb03e33975ba6cdc8"
+    sha256 arm64_linux:       "a9847b882a10583d069c850a84e96ac241081a9876c1edc972835f2eca8e4ec4"
+    sha256 x86_64_linux:      "56173ebbe72abfcbf17681a55eadc3270a45b39937175857f7852deef2769c80"
   end
-  
+
   depends_on "docutils" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkgconf" => [:build, :test]
-  depends_on xcode: :build
   depends_on "darkbrow/repo/ffmpeg"
   depends_on "jpeg-turbo"
   depends_on "libarchive"
@@ -50,61 +48,33 @@ class Mpv < Formula
   depends_on "yt-dlp"
   depends_on "zimg"
 
-  uses_from_macos "zlib"
-
-  depends_on "darkbrow/repo/libsixel"
-  depends_on "darkbrow/repo/libcaca"
-
   on_macos do
     depends_on "molten-vk"
   end
 
-  on_ventura :or_older do
-    depends_on "lld" => :build
-  end
-
   on_linux do
     depends_on "alsa-lib"
-    depends_on "libdrm"
     depends_on "libva"
     depends_on "libvdpau"
     depends_on "libx11"
     depends_on "libxext"
+    depends_on "libxfixes"
     depends_on "libxkbcommon"
     depends_on "libxpresent"
     depends_on "libxrandr"
     depends_on "libxscrnsaver"
     depends_on "libxv"
     depends_on "mesa"
+    depends_on "pipewire"
     depends_on "pulseaudio"
     depends_on "wayland"
-    depends_on "wayland-protocols" # needed by mpv.pc
+    depends_on "wayland-protocols" => :no_linkage # needed by mpv.pc
+    depends_on "zlib-ng-compat"
   end
-  
-  conflicts_with cask: "stolendata-mpv", because: "both install `mpv` binaries"
-  
+
   def install
-    # LANG is unset by default on macOS and causes issues when calling getlocale
-    # or getdefaultlocale in docutils. Force the default c/posix locale since
-    # that's good enough for building the manpage.
-    ENV["LC_ALL"] = "C"
-
-    # force meson find ninja from homebrew
-    ENV["NINJA"] = which("ninja")
-
-    # libarchive is keg-only
-    ENV.prepend_path "PKG_CONFIG_PATH", Formula["libarchive"].opt_lib/"pkgconfig" if OS.mac?
-
-    # Work around https://github.com/mpv-player/mpv/issues/15591
-    # This bug happens running classic ld, which is the default
-    # prior to Xcode 15 and we enable it in the superenv prior to
-    # Xcode 15.3 when using -dead_strip_dylibs (default for meson).
-    if OS.mac? && MacOS.version <= :ventura
-      ENV.append "LDFLAGS", "-fuse-ld=lld"
-      ENV.O1 # -Os is not supported for lld and we don't have ENV.O2
-    end
-
     args = %W[
+      --sysconfdir=#{etc}
       -Dbuild-date=false
       -Dhtml-build=enabled
       -Djavascript=enabled
@@ -113,10 +83,6 @@ class Mpv < Formula
       -Dlibarchive=enabled
       -Duchardet=enabled
       -Dvulkan=enabled
-      --sysconfdir=#{pkgetc}
-      --datadir=#{pkgshare}
-      --mandir=#{man}
-      -Ddebug=false
     ]
     if OS.linux?
       args += %w[
@@ -129,27 +95,31 @@ class Mpv < Formula
     system "meson", "setup", "build", *args, *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
+    bash_completion.install share/"bash-completion/completions/mpv"
 
-    if OS.mac?
-      # `pkg-config --libs mpv` includes libarchive, but that package is
-      # keg-only so it needs to look for the pkgconfig file in libarchive's opt
-      # path.
-      libarchive = Formula["libarchive"].opt_prefix
-      inreplace lib/"pkgconfig/mpv.pc" do |s|
-        s.gsub!(/^Requires\.private:(.*)\blibarchive\b(.*?)(,.*)?$/,
-                "Requires.private:\\1#{libarchive}/lib/pkgconfig/libarchive.pc\\3")
-      end
-    end
+    return unless OS.mac?
 
-    bash_completion.install "etc/mpv.bash-completion" => "mpv"
-    zsh_completion.install "etc/_mpv.zsh" => "_mpv"
+    # `pkg-config --libs mpv` includes libarchive, but that package is
+    # keg-only so it needs to look for the pkgconfig file in libarchive's opt
+    # path.
+    libarchive = formula_opt_prefix("libarchive")
+    inreplace lib/"pkgconfig/mpv.pc",
+              /^Requires\.private:(.*)\blibarchive\b(.*?)(,.*)?$/,
+              "Requires.private:\\1#{libarchive}/lib/pkgconfig/libarchive.pc\\3"
+  end
+
+  def caveats
+    <<~EOS
+      The global configuration directory is now #{pkgetc}/
+      You may need to migrate any data in previous #{pkgetc}/mpv/
+    EOS
   end
 
   test do
     system bin/"mpv", "--ao=null", "--vo=null", test_fixtures("test.wav")
     assert_match "vapoursynth", shell_output("#{bin}/mpv --vf=help")
 
-    # Make sure `pkg-config` can parse `mpv.pc` after the `inreplace`.
+    # Make sure `pkgconf` can parse `mpv.pc` after the `inreplace`.
     system "pkgconf", "--print-errors", "mpv"
   end
 end

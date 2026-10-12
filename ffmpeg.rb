@@ -1,27 +1,13 @@
 class Ffmpeg < Formula
-  desc "Play, record, convert, and stream audio and video"
+  desc "Play, record, convert, and stream select audio and video codecs"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz"
-  sha256 "b2751fccb6cc4c77708113cd78b561059b6fa904b24162fa0be2d60273d27b8e"
+  url "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz"
+  sha256 "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e"
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
-  license "GPL-2.0-or-later"
+  # Passing `--enable-version3` changes the license to GPL v3+.
+  license "GPL-3.0-or-later"
   head "https://github.com/FFmpeg/FFmpeg.git", branch: "master"
-
-  livecheck do
-    url "https://ffmpeg.org/download.html"
-    regex(/href=.*?ffmpeg[._-]v?(\d+(?:\.\d+)+)\.t/i)
-  end
-
-  # bottle do
-  #   sha256 arm64_sequoia: "a3c8c7d17e361171186713958b25b90a59805eff9ef6348b841249e4411ba63e"
-  #   sha256 arm64_sonoma:  "76310dc20a609f07064f77915e40e070b90769f1aeb76f2adebc57d186e91fc6"
-  #   sha256 arm64_ventura: "92325bbf93378bfc4cdfcc3fceabf4f3636a96562cd0f747026e55876e28f527"
-  #   sha256 sonoma:        "489500b48040b02e61d58385278feac226cc8cc38da46f0612da6c4d82c96453"
-  #   sha256 ventura:       "dab39c01c0a58c58f4a81abe01627671a4bdeeef24fbd338ff41a4c7f4ddc084"
-  #   sha256 arm64_linux:   "cc2c521c60d093f6648c12346ecfdd9e1d3fbc9cd836164a69053486a0f25cb0"
-  #   sha256 x86_64_linux:  "b8a35131d5142ccf5bc3925476fc2283550a697981034ef51ad76aaaade31a3a"
-  # end
 
   livecheck do
     url "https://ffmpeg.org/download.html"
@@ -35,12 +21,14 @@ class Ffmpeg < Formula
   depends_on "fontconfig"
   depends_on "freetype"
   depends_on "frei0r"
+  depends_on "ggml"
   depends_on "gnutls"
   depends_on "harfbuzz"
   depends_on "jpeg-xl"
   depends_on "lame"
   depends_on "libass"
   depends_on "libbluray"
+  depends_on "libplacebo"
   depends_on "librist"
   depends_on "libsoxr"
   depends_on "libssh"
@@ -53,9 +41,10 @@ class Ffmpeg < Formula
   depends_on "opencore-amr"
   depends_on "openjpeg"
   depends_on "opus"
+  depends_on "qrencode"
   depends_on "rav1e"
   depends_on "rubberband"
-  depends_on "sdl2"
+  depends_on "sdl2-compat"
   depends_on "snappy"
   depends_on "speex"
   depends_on "srt"
@@ -63,6 +52,7 @@ class Ffmpeg < Formula
   depends_on "tesseract"
   depends_on "theora"
   depends_on "webp"
+  depends_on "whisper.cpp"
   depends_on "x264"
   depends_on "x265"
   depends_on "xvid"
@@ -72,11 +62,10 @@ class Ffmpeg < Formula
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
-  uses_from_macos "zlib"
 
-  depends_on "librsvg"
   depends_on "fdk-aac"
-  depends_on "darkbrow/repo/libcaca"
+  depends_on "libcaca"
+  depends_on "librsvg"
 
   on_macos do
     depends_on "libarchive"
@@ -88,23 +77,16 @@ class Ffmpeg < Formula
     depends_on "alsa-lib"
     depends_on "libxext"
     depends_on "libxv"
+    depends_on "zlib-ng-compat"
   end
 
   on_intel do
     depends_on "nasm" => :build
   end
 
-  # Fix for QtWebEngine, do not remove
-  # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=270209
-  patch do
-    url "https://gitlab.archlinux.org/archlinux/packaging/packages/ffmpeg/-/raw/5670ccd86d3b816f49ebc18cab878125eca2f81f/add-av_stream_get_first_dts-for-chromium.patch"
-    sha256 "57e26caced5a1382cb639235f9555fc50e45e7bf8333f7c9ae3d49b3241d3f77"
-  end
-
-
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
-    ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.clang_build_version >= 1500
+    ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.ld64_version.between?("1015.7", "1022.1")
 
     args = %W[
       --prefix=#{prefix}
@@ -125,6 +107,8 @@ class Ffmpeg < Formula
       --enable-libjxl
       --enable-libmp3lame
       --enable-libopus
+      --enable-libplacebo
+      --enable-libqrencode
       --enable-librav1e
       --enable-librist
       --enable-librubberband
@@ -155,11 +139,12 @@ class Ffmpeg < Formula
       --enable-libsoxr
       --enable-libzmq
       --enable-libzimg
+      --enable-whisper
       --disable-libjack
       --disable-indev=jack
       --enable-nonfree
-      --enable-libcaca
       --enable-libfdk-aac
+      --enable-libcaca
       --enable-librsvg
     ]
 
@@ -176,10 +161,21 @@ class Ffmpeg < Formula
     pkgshare.install buildpath/"tools/python"
   end
 
+  def caveats
+    <<~EOS
+      ffmpeg-full includes additional tools and libraries that are not included in the regular ffmpeg formula.
+    EOS
+  end
+
   test do
-    # Create an example mp4 file
+    # Create a 5 second test MP4
     mp4out = testpath/"video.mp4"
-    system bin/"ffmpeg", "-filter_complex", "testsrc=rate=1:duration=1", mp4out
-    assert_predicate mp4out, :exist?
+    system bin/"ffmpeg", "-filter_complex", "testsrc=rate=1:duration=5", mp4out
+    assert_match(/Duration: 00:00:05\.00,.*Video: h264/m, shell_output("#{bin}/ffprobe -hide_banner #{mp4out} 2>&1"))
+
+    # Re-encode it in HEVC/Matroska
+    mkvout = testpath/"video.mkv"
+    system bin/"ffmpeg", "-i", mp4out, "-c:v", "hevc", mkvout
+    assert_match(/Duration: 00:00:05\.00,.*Video: hevc/m, shell_output("#{bin}/ffprobe -hide_banner #{mkvout} 2>&1"))
   end
 end
