@@ -2,7 +2,7 @@ class Mpv < Formula
   desc "Media player based on MPlayer and mplayer2"
   homepage "https://mpv.io"
   license all_of: ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
-  revision 9
+  revision 11
   compatibility_version 1
   head "https://github.com/mpv-player/mpv.git", branch: "master"
 
@@ -17,15 +17,14 @@ class Mpv < Formula
       type :backport
       resolves "https://github.com/mpv-player/mpv/pull/17731"
     end
-  end
 
-  bottle do
-    sha256 arm64_golden_gate: "3be8690e865b98a3f3f7527acaa72a097b8d7f4d64d38e9242e472cdc98ccad4"
-    sha256 arm64_tahoe:       "136d94fc3b285de144445862e16b4a988b032dafb74e126bf5172055182b6457"
-    sha256 arm64_sequoia:     "ef4f4e6295d752e686b16750e607ef1955d9df68afce1004744e0462415d1b7a"
-    sha256 arm64_sonoma:      "adeccfdd66dd3d5c1a0a6f44dd400b10d01263e876941f8eb03e33975ba6cdc8"
-    sha256 arm64_linux:       "a9847b882a10583d069c850a84e96ac241081a9876c1edc972835f2eca8e4ec4"
-    sha256 x86_64_linux:      "56173ebbe72abfcbf17681a55eadc3270a45b39937175857f7852deef2769c80"
+    # Backport fix for use-after-free crash on audio device change (macOS 26/27)
+    patch do
+      url "https://github.com/mpv-player/mpv/commit/c5d391adba7bd024954d0df1e0405f5749f4d4ca.patch?full_index=1"
+      sha256 "769b218df220738cc1cf9f81cf696c16518c5dfe56a5ef028e33b22536e0e924"
+      type :backport
+      resolves "https://github.com/mpv-player/mpv/issues/18274"
+    end
   end
 
   depends_on "docutils" => :build
